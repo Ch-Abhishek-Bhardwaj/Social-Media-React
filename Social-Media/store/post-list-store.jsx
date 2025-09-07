@@ -3,20 +3,24 @@ import { createContext, useReducer } from "react";
 export const PostList = createContext({
     postList: [],
     addPost: () => {},
-    deletePost: () => {}
+    deletePost: () => {},
+    addInitialPost: () => {}
 });
 
 const postListReducer = (currPostList, action) => {
+    let newPostList = currPostList;
     if(action.type === "DELETE_POST"){
-        return currPostList.filter(post => post.id !== action.payload.postId);
+        newPostList = currPostList.filter(post => post.id !== action.payload.postId);
     }else if(action.type === "ADD_POST"){
-        return [action.payload , ...currPostList];
+        newPostList = [action.payload , ...currPostList];
+    }else if(action.type === "ADD_INITIAL_POST"){
+        newPostList = [...action.payload, ...currPostList];
     }
-    return currPostList;
+    return newPostList;
 }
 
 const PostListProvider = ({children}) => {
-    const [postList, dispatchPostList] = useReducer(postListReducer, defaultPostList);
+    const [postList, dispatchPostList] = useReducer(postListReducer, []);
 
     const addPost = (userId, title, body, reaction, tags) => {
         dispatchPostList({
@@ -31,44 +35,41 @@ const PostListProvider = ({children}) => {
             }
         });
     };
-    const deletePost = (postId) => {
+
+    const addInitialPost = (posts) => {
+        dispatchPostList({
+            type: "ADD_INITIAL_POST",
+            payload: posts
+        });
+    };
+
+
+
+
+    const deletePost = useCallback((postId) => {
         dispatchPostList({
             type: "DELETE_POST",
             payload: {
                 postId: postId
             }
         });
-    };
+    },
+     [dispatchPostList]
+    );
 
     return (
         <PostList.Provider value={{
             postList,
             addPost,
-            deletePost
+            deletePost,
+            addInitialPost
         }}>
             {children}
         </PostList.Provider>
     );
 };
 
-const defaultPostList = [
-    {
-        id: 1,
-        title: "Working in a project",
-        body: "I am working in a project. I am learning React.",
-        reaction: 2,
-        userId: 1,
-        tags: ['React', 'Project']
-    },
-    {
-        id: 2,
-        title: "Completed B.tech",
-        body: "I have completed my B.tech. I am learning how to build applications.",
-        reaction: 15,
-        userId: 1,
-        tags: ['React', 'Project']
-    }
-];
+
 
 export { PostListProvider };
 export default PostList;
