@@ -27,9 +27,27 @@ const CreatePost = () => {
     bodyElement.current.value = "";
     reactionsElement.current.value = "";
     tagsElement.current.value = "";
+    console.log("Sending to server");
+    fetch('https://dummyjson.com/posts/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify( {
+        userId: userId,
+        title: title,
+        body: body,
+        reaction: reaction,
+        tags: tags
+    })
+    })
+    .then(res => res.json())
+    .then(post => {
+      console.log(`Post ${post.id} sended successfully`);
+      addPost(post);
+    });
+    console.log(post);
     
     
-    addPost(userId, title, body, reaction, tags);
+    
   }
 
 
