@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { PostListProvider } from "../store/post-list-store";
 import Sidebar from "./components/Sidebar";
+import { Outlet } from "react-router-dom";
 import CreatePost from "./components/CreatePost";
 import PostList from "./components/PostList";
 import './App.css'
@@ -18,7 +19,8 @@ function App() {
       <Sidebar selectedTab={selectedTab} setSelectedTab={setSelectedTab}/>
       <div className="app-Content">
         <Header/>
-        {selectedTab === "Home" ? (<PostList/>):(<CreatePost/>)}
+        <Outlet />
+
         <Footer/>
       </div>
     </div>
